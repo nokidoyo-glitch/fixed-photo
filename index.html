@@ -96,14 +96,12 @@ nav{display:flex;justify-content:space-between;align-items:baseline;padding:18px
 .empty-title{font-family:'IM Fell English',serif;font-style:italic;font-size:28px;color:var(--muted);margin-bottom:8px;}
 .empty-sub{font-size:10px;letter-spacing:3px;color:var(--rule);}
 
-/* overlays */
 .ov{display:none;position:fixed;inset:0;background:rgba(15,12,10,0.8);z-index:200;align-items:center;justify-content:center;padding:24px;}
 .ov.open{display:flex;}
 .modal{background:var(--paper);border:1px solid var(--ink);position:relative;}
 .mclose{position:absolute;top:14px;right:18px;background:none;border:none;font-size:10px;letter-spacing:2px;color:var(--muted);cursor:pointer;}
 .mclose:hover{color:var(--ink);}
 
-/* id modal */
 .id-modal{padding:40px;width:100%;max-width:400px;}
 .id-title{font-family:'IM Fell English',serif;font-style:italic;font-size:26px;margin-bottom:4px;}
 .id-sub{font-size:10px;letter-spacing:3px;color:var(--muted);margin-bottom:28px;}
@@ -119,7 +117,6 @@ nav{display:flex;justify-content:space-between;align-items:baseline;padding:18px
 .id-switch{margin-top:14px;text-align:center;font-size:10px;color:var(--muted);letter-spacing:1px;}
 .id-switch a{color:var(--ink);cursor:pointer;text-decoration:underline;text-underline-offset:3px;}
 
-/* upload modal */
 .u-modal{padding:36px;width:100%;max-width:640px;max-height:92vh;overflow-y:auto;}
 .u-prev{width:100%;max-height:280px;object-fit:cover;display:block;margin-bottom:26px;filter:contrast(1.04);}
 .u-head{font-family:'Noto Serif JP',serif;font-size:12px;font-weight:300;letter-spacing:4px;color:var(--muted);margin-bottom:22px;}
@@ -129,7 +126,6 @@ nav{display:flex;justify-content:space-between;align-items:baseline;padding:18px
 .mpick.sel{border-color:var(--ink);background:var(--ink);color:var(--paper);}
 .mpick.sel .mood-dot{background:var(--paper)!important;}
 
-/* detail modal */
 .d-modal{width:100%;max-width:860px;max-height:94vh;display:grid;grid-template-columns:1fr 320px;}
 .d-img{width:100%;height:100%;object-fit:cover;display:block;filter:contrast(1.04);min-height:400px;}
 .d-right{border-left:1px solid var(--rule);display:flex;flex-direction:column;max-height:94vh;overflow-y:auto;}
@@ -142,8 +138,14 @@ nav{display:flex;justify-content:space-between;align-items:baseline;padding:18px
 .d-note{font-family:'Noto Serif JP',serif;font-size:13px;line-height:2.2;color:#3a3630;}
 .d-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:14px;}
 .d-tag{font-size:9px;letter-spacing:2px;color:var(--muted);border:1px solid var(--rule);padding:3px 9px;}
-.d-del{display:block;margin:10px 22px 0;font-size:9px;letter-spacing:2px;color:var(--rule);background:none;border:none;cursor:pointer;padding:0;}
-.d-del:hover{color:#8a3020;}
+
+/* 作者操作按钮行 */
+.owner-actions{display:flex;gap:12px;margin-top:16px;padding-top:14px;border-top:1px solid var(--rule);}
+.edit-btn{background:none;border:1px solid var(--rule);padding:6px 16px;font-size:9px;letter-spacing:2px;color:var(--muted);cursor:pointer;font-family:'Noto Sans JP',sans-serif;transition:all 0.15s;}
+.edit-btn:hover{border-color:var(--ink);color:var(--ink);}
+.del-btn-sm{background:none;border:none;font-size:9px;letter-spacing:2px;color:var(--rule);cursor:pointer;padding:6px 0;font-family:'Noto Sans JP',sans-serif;}
+.del-btn-sm:hover{color:#8a3020;}
+
 .d-reacts{display:flex;gap:8px;flex-wrap:wrap;padding:14px 22px;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);}
 .cmt-section{flex:1;display:flex;flex-direction:column;}
 .cmt-head{padding:12px 22px 8px;font-size:10px;letter-spacing:3px;color:var(--muted);border-bottom:1px solid var(--rule);}
@@ -161,6 +163,23 @@ nav{display:flex;justify-content:space-between;align-items:baseline;padding:18px
 .cmt-input:focus{border-color:var(--ink);}
 .cmt-send{margin-top:8px;background:var(--ink);color:var(--paper);border:none;padding:7px 18px;font-size:9px;letter-spacing:3px;cursor:pointer;font-family:'Noto Sans JP',sans-serif;}
 .cmt-send:hover{opacity:0.8;}
+
+/* 编辑模드 */
+.edit-field{width:100%;background:transparent;border:none;border-bottom:1px solid var(--rule);padding:4px 0;font-family:'Noto Serif JP',serif;color:var(--ink);outline:none;line-height:1.6;}
+.edit-field:focus{border-color:var(--ink);}
+.edit-title-f{font-size:21px;font-weight:300;margin-bottom:8px;}
+.edit-note-f{font-size:13px;line-height:2.2;resize:none;min-height:80px;margin-top:8px;width:100%;}
+.edit-meta-row{display:flex;gap:10px;margin-bottom:8px;}
+.edit-meta-row .edit-field{font-size:11px;letter-spacing:1px;}
+.save-edit-btn{background:var(--ink);color:var(--paper);border:none;padding:8px 20px;font-size:9px;letter-spacing:3px;cursor:pointer;font-family:'Noto Sans JP',sans-serif;margin-top:12px;}
+.save-edit-btn:hover{opacity:0.8;}
+.cancel-edit-btn{background:none;border:none;font-size:9px;letter-spacing:2px;color:var(--muted);cursor:pointer;margin-left:12px;}
+.cancel-edit-btn:hover{color:var(--ink);}
+.edit-mood-mini{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0;}
+.mpick-mini{padding:6px 4px;border:1px solid var(--rule);background:transparent;cursor:pointer;font-family:'Noto Sans JP',sans-serif;font-size:9px;letter-spacing:1px;color:var(--muted);display:flex;align-items:center;gap:5px;transition:all 0.15s;}
+.mpick-mini:hover{border-color:var(--ink);color:var(--ink);}
+.mpick-mini.sel{border-color:var(--ink);background:var(--ink);color:var(--paper);}
+.mpick-mini.sel .mood-dot{background:var(--paper)!important;}
 
 .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--paper);padding:9px 22px;font-size:10px;letter-spacing:3px;opacity:0;transition:opacity 0.3s;pointer-events:none;z-index:999;}
 .toast.show{opacity:1;}
@@ -229,12 +248,12 @@ nav{display:flex;justify-content:space-between;align-items:baseline;padding:18px
   </div>
 </div>
 
-<!-- Upload Modal -->
+<!-- Upload / Edit Modal -->
 <div class="ov" id="uOv">
   <div class="modal u-modal">
     <button class="mclose" onclick="closeU()">CLOSE ×</button>
     <img id="uPrev" class="u-prev" src="" alt="">
-    <div class="u-head">RECORD THIS FRAME</div>
+    <div class="u-head" id="uHead">RECORD THIS FRAME</div>
     <div class="field-row">
       <div class="field"><label>Title</label><input id="fTitle" type="text" placeholder="这一刻的名字"></div>
       <div class="field"><label>Location</label><input id="fLoc" type="text" placeholder="地点"></div>
@@ -257,7 +276,7 @@ nav{display:flex;justify-content:space-between;align-items:baseline;padding:18px
       </div>
     </div>
     <div class="field"><label>Note</label><textarea id="fNote" placeholder="写下当时的心情或故事……"></textarea></div>
-    <button class="big-btn" onclick="savePhoto()">— 记 录 —</button>
+    <button class="big-btn" id="uSubmitBtn" onclick="savePhoto()">— 记 录 —</button>
   </div>
 </div>
 
@@ -269,18 +288,8 @@ nav{display:flex;justify-content:space-between;align-items:baseline;padding:18px
     </div>
     <div class="d-right">
       <button class="mclose" style="position:sticky;top:12px;right:16px;margin:12px 14px 0 auto;display:block;" onclick="closeD()">CLOSE ×</button>
-      <div class="d-body">
-        <div class="d-no" id="dNo"></div>
-        <div class="d-title" id="dTitle2"></div>
-        <div class="d-byline" id="dByline"></div>
-        <div class="d-meta">
-          <span class="d-info" id="dDate2"></span>
-          <span class="d-info" id="dLoc2"></span>
-          <div class="mood-row"><span class="mood-dot" id="dMoodDot"></span><span class="d-info" id="dMoodLbl"></span></div>
-        </div>
-        <div class="d-note" id="dNote2"></div>
-        <div class="d-tags" id="dTags2"></div>
-        <button class="d-del" id="dDel" style="display:none">DELETE THIS FRAME</button>
+      <div class="d-body" id="dBody">
+        <!-- filled by renderDetail() -->
       </div>
       <div class="d-reacts" id="dReacts"></div>
       <div class="cmt-section">
@@ -298,16 +307,15 @@ nav{display:flex;justify-content:space-between;align-items:baseline;padding:18px
 <div class="toast" id="toast"></div>
 
 <script>
-const SB_URL = 'https://igqkwtlxehssfqryxjfc.supabase.co/rest/v1';
-const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlncWt3dGx4ZWhzc2Zxcnl4amZjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3MzM5OTIsImV4cCI6MjA5MjMwOTk5Mn0.h2PA7wzhtQI8VUO5-kMHHWEIyTBlaJVVI1UNtjivixc';
-const HDR = {'Content-Type':'application/json','apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY};
-
+const SB_URL='https://igqkwtlxehssfqryxjfc.supabase.co/rest/v1';
+const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlncWt3dGx4ZWhzc2Zxcnl4amZjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3MzM5OTIsImV4cCI6MjA5MjMwOTk5Mn0.h2PA7wzhtQI8VUO5-kMHHWEIyTBlaJVVI1UNtjivixc';
+const HDR={'Content-Type':'application/json','apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY};
 const MOODS=['平静','温柔','忧郁','兴奋','治愈','孤独','沉思','怀念'];
 const LAYOUTS=['layout-a','layout-b','layout-c','layout-a','layout-c','layout-b'];
 const REACTS=[{k:'resonance',l:'共鸣'},{k:'touched',l:'触动'},{k:'beautiful',l:'美'},{k:'quiet',l:'静'},{k:'wander',l:'漫游'}];
 
 let session=JSON.parse(sessionStorage.getItem('fc_s')||'null');
-let pending=null, selMood=-1, curId=null, idMode='login';
+let pending=null,selMood=-1,curId=null,idMode='login',editingId=null;
 
 async function api(method,table,body,params=''){
   const r=await fetch(`${SB_URL}/${table}${params}`,{method,headers:{...HDR,...(method!=='GET'?{'Prefer':'return=representation'}:{})},body:body?JSON.stringify(body):undefined});
@@ -317,7 +325,7 @@ async function api(method,table,body,params=''){
 const GET=(t,p='')=>api('GET',t,null,p);
 const POST=(t,b)=>api('POST',t,b);
 const PATCH=(t,b,p)=>api('PATCH',t,b,p);
-const DELETE=(t,p)=>api('DELETE',t,null,p);
+const DEL=(t,p)=>api('DELETE',t,null,p);
 
 function init(){
   const now=new Date();
@@ -325,19 +333,11 @@ function init(){
   document.getElementById('navDate').textContent=ds;
   document.getElementById('mhDate').textContent=ds;
   document.getElementById('fDate').value=now.toISOString().split('T')[0];
-  updateSessionUI();
-  loadPhotos();
+  updateSessionUI();loadPhotos();
 }
-
 function updateSessionUI(){
-  if(session){
-    document.getElementById('navUser').style.display='flex';
-    document.getElementById('navName').textContent=session.name;
-    document.getElementById('loginBtn').style.display='none';
-  }else{
-    document.getElementById('navUser').style.display='none';
-    document.getElementById('loginBtn').style.display='block';
-  }
+  if(session){document.getElementById('navUser').style.display='flex';document.getElementById('navName').textContent=session.name;document.getElementById('loginBtn').style.display='none';}
+  else{document.getElementById('navUser').style.display='none';document.getElementById('loginBtn').style.display='block';}
 }
 function logout(){session=null;sessionStorage.removeItem('fc_s');updateSessionUI();toast('已退出');}
 let pendingCb=null;
@@ -370,8 +370,7 @@ async function submitId(){
       toast('欢迎回来，'+name);
     }
     session={name};sessionStorage.setItem('fc_s',JSON.stringify(session));
-    updateSessionUI();closeId();
-    if(pendingCb){pendingCb();pendingCb=null;}
+    updateSessionUI();closeId();if(pendingCb){pendingCb();pendingCb=null;}
   }catch(e){document.getElementById('idHint').textContent='服务错误，请稍后再试';}
 }
 
@@ -383,8 +382,42 @@ dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('over');co
 dz.addEventListener('click',()=>requireLogin(()=>document.getElementById('fileInput').click()));
 document.getElementById('fileInput').addEventListener('change',e=>{if(e.target.files[0])openU(e.target.files[0]);e.target.value='';});
 
-function openU(f){pending=f;const r=new FileReader();r.onload=ev=>{document.getElementById('uPrev').src=ev.target.result;document.getElementById('uOv').classList.add('open');};r.readAsDataURL(f);}
-function closeU(){document.getElementById('uOv').classList.remove('open');pending=null;selMood=-1;document.querySelectorAll('.mpick').forEach(b=>b.classList.remove('sel'));['fTitle','fLoc','fNote','fTags'].forEach(id=>document.getElementById(id).value='');}
+function openU(f){
+  editingId=null;
+  pending=f;
+  const r=new FileReader();
+  r.onload=ev=>{
+    document.getElementById('uPrev').src=ev.target.result;
+    document.getElementById('uHead').textContent='RECORD THIS FRAME';
+    document.getElementById('uSubmitBtn').textContent='— 记 录 —';
+    document.getElementById('uSubmitBtn').onclick=savePhoto;
+    document.getElementById('uOv').classList.add('open');
+  };
+  r.readAsDataURL(f);
+}
+
+function openEdit(p){
+  editingId=p.id;pending=null;
+  document.getElementById('uPrev').src=p.src;
+  document.getElementById('uHead').textContent='EDIT THIS FRAME';
+  document.getElementById('fTitle').value=p.title||'';
+  document.getElementById('fLoc').value=p.loc||'';
+  document.getElementById('fDate').value=p.date||'';
+  document.getElementById('fTags').value=(p.tags||[]).join(', ');
+  document.getElementById('fNote').value=p.note||'';
+  selMood=p.mood!=null?p.mood:-1;
+  document.querySelectorAll('.mpick').forEach(b=>{b.classList.toggle('sel',+b.dataset.i===selMood);});
+  document.getElementById('uSubmitBtn').textContent='— 保 存 —';
+  document.getElementById('uSubmitBtn').onclick=saveEdit;
+  document.getElementById('uOv').classList.add('open');
+}
+
+function closeU(){
+  document.getElementById('uOv').classList.remove('open');
+  pending=null;editingId=null;selMood=-1;
+  document.querySelectorAll('.mpick').forEach(b=>b.classList.remove('sel'));
+  ['fTitle','fLoc','fNote','fTags'].forEach(id=>document.getElementById(id).value='');
+}
 function pickMood(btn){document.querySelectorAll('.mpick').forEach(b=>b.classList.remove('sel'));btn.classList.add('sel');selMood=+btn.dataset.i;}
 
 async function savePhoto(){
@@ -392,28 +425,30 @@ async function savePhoto(){
   const r=new FileReader();
   r.onload=async ev=>{
     try{
-      await POST('photos',{
-        author:session.name,
-        title:document.getElementById('fTitle').value||'無題',
-        loc:document.getElementById('fLoc').value,
-        date:document.getElementById('fDate').value,
-        mood:selMood>=0?selMood:null,
-        note:document.getElementById('fNote').value,
-        tags:document.getElementById('fTags').value.split(',').map(t=>t.trim()).filter(Boolean),
-        src:ev.target.result
-      });
+      await POST('photos',{author:session.name,title:document.getElementById('fTitle').value||'無題',loc:document.getElementById('fLoc').value,date:document.getElementById('fDate').value,mood:selMood>=0?selMood:null,note:document.getElementById('fNote').value,tags:document.getElementById('fTags').value.split(',').map(t=>t.trim()).filter(Boolean),src:ev.target.result});
       closeU();toast('已记录');loadPhotos();
     }catch(e){toast('保存失败：'+e.message);}
   };
   r.readAsDataURL(pending);
 }
 
+async function saveEdit(){
+  if(!editingId||!session)return;
+  try{
+    await PATCH('photos',{title:document.getElementById('fTitle').value||'無題',loc:document.getElementById('fLoc').value,date:document.getElementById('fDate').value,mood:selMood>=0?selMood:null,note:document.getElementById('fNote').value,tags:document.getElementById('fTags').value.split(',').map(t=>t.trim()).filter(Boolean)},'?id=eq.'+editingId);
+    closeU();toast('已更新');
+    // reload detail
+    const rows=await GET('photos','?id=eq.'+editingId);
+    if(rows[0])renderDetail(rows[0]);
+    loadPhotos();
+  }catch(e){toast('更新失败：'+e.message);}
+}
+
 async function loadPhotos(){
   try{
     const photos=await GET('photos','?order=id.desc');
     renderAll(photos);
-    const n=photos.length;
-    const s=String(n).padStart(3,'0');
+    const n=photos.length,s=String(n).padStart(3,'0');
     document.getElementById('navCount').textContent='NO.'+s;
     document.getElementById('mhCount').innerHTML=s+'<small>FRAMES COLLECTED</small>';
     document.getElementById('issueCount').textContent=n?n+' FRAMES':'';
@@ -442,8 +477,7 @@ async function loadCardReacts(pid){
   const el=document.getElementById('cr-'+pid);if(!el)return;
   try{
     const rows=await GET('reactions','?photo_id=eq.'+pid);
-    const counts={};
-    rows.forEach(r=>{counts[r.reaction_key]=(counts[r.reaction_key]||0)+1;});
+    const counts={};rows.forEach(r=>{counts[r.reaction_key]=(counts[r.reaction_key]||0)+1;});
     el.innerHTML=REACTS.filter(r=>counts[r.k]).map(r=>{
       const on=session&&rows.some(x=>x.reaction_key===r.k&&x.user_name===session.name);
       return `<button class="react-btn${on?' on':''}" onclick="event.stopPropagation();toggleReact(${pid},'${r.k}')"><span class="rdot"></span>${r.l} ${counts[r.k]}</button>`;
@@ -455,10 +489,9 @@ async function toggleReact(pid,key){
   if(!session){requireLogin(()=>toggleReact(pid,key));return;}
   try{
     const rows=await GET('reactions',`?photo_id=eq.${pid}&user_name=eq.${encodeURIComponent(session.name)}&reaction_key=eq.${key}`);
-    if(rows.length) await DELETE('reactions',`?photo_id=eq.${pid}&user_name=eq.${encodeURIComponent(session.name)}&reaction_key=eq.${key}`);
+    if(rows.length)await DEL('reactions',`?photo_id=eq.${pid}&user_name=eq.${encodeURIComponent(session.name)}&reaction_key=eq.${key}`);
     else await POST('reactions',{photo_id:pid,user_name:session.name,reaction_key:key});
-    loadCardReacts(pid);
-    if(curId===pid)loadDetailReacts(pid);
+    loadCardReacts(pid);if(curId===pid)loadDetailReacts(pid);
   }catch(e){toast('操作失败');}
 }
 
@@ -470,9 +503,32 @@ async function loadDetailReacts(pid){
     el.innerHTML=REACTS.map(r=>{
       const n=counts[r.k]||0;
       const on=session&&rows.some(x=>x.reaction_key===r.k&&x.user_name===session.name);
-      return `<button class="react-btn${on?' on':''}" onclick="toggleReact(${pid},'${r.k}')"><span class="rdot"></span>${r.l}${n?` ${n}`:''}</button>`;
+      return `<button class="react-btn${on?' on':''}" onclick="toggleReact(${pid},'${r.k}')"><span class="rdot"></span>${r.l}${n?' '+n:''}</button>`;
     }).join('');
   }catch{}
+}
+
+function renderDetail(p){
+  const all_count_el=document.getElementById('navCount');
+  const isOwner=session&&session.name===p.author;
+  const tags=(p.tags||[]).map(t=>`<span class="d-tag">${t}</span>`).join('');
+  const ownerBtns=isOwner?`<div class="owner-actions">
+    <button class="edit-btn" onclick="openEdit(${JSON.stringify(p).replace(/"/g,'&quot;')})">编辑内容</button>
+    <button class="del-btn-sm" onclick="deletePhoto(${p.id})">删除</button>
+  </div>`:'';
+  document.getElementById('dBody').innerHTML=`
+    <div class="d-no" id="dNo"></div>
+    <div class="d-title">${p.title}</div>
+    <div class="d-byline">by ${p.author}</div>
+    <div class="d-meta">
+      <span class="d-info">${fmtDate(p.date)}</span>
+      <span class="d-info">${p.loc||''}</span>
+      ${p.mood!=null?`<div class="mood-row"><span class="mood-dot mood-${p.mood}"></span>${MOODS[p.mood]}</div>`:''}
+    </div>
+    <div class="d-note">${p.note||''}</div>
+    <div class="d-tags">${tags}</div>
+    ${ownerBtns}
+  `;
 }
 
 async function openD(id){
@@ -480,28 +536,22 @@ async function openD(id){
   try{
     const rows=await GET('photos','?id=eq.'+id);
     const p=rows[0];if(!p)return;
-    const all=await GET('photos','?order=id.desc&select=id');
-    const idx=all.findIndex(x=>x.id===id);
     document.getElementById('dImg').src=p.src;
-    document.getElementById('dNo').textContent='No.'+(String(all.length-idx).padStart(3,'0'));
-    document.getElementById('dTitle2').textContent=p.title;
-    document.getElementById('dByline').textContent='by '+p.author;
-    document.getElementById('dDate2').textContent=fmtDate(p.date);
-    document.getElementById('dLoc2').textContent=p.loc||'';
-    const dot=document.getElementById('dMoodDot');
-    const lbl=document.getElementById('dMoodLbl');
-    if(p.mood!=null){dot.className='mood-dot mood-'+p.mood;lbl.textContent=MOODS[p.mood];}else{dot.className='mood-dot';lbl.textContent='';}
-    document.getElementById('dNote2').textContent=p.note||'';
-    document.getElementById('dTags2').innerHTML=(p.tags||[]).map(t=>`<span class="d-tag">${t}</span>`).join('');
-    const del=document.getElementById('dDel');
-    if(session&&session.name===p.author){del.style.display='block';del.onclick=async()=>{if(confirm('删除这帧记录？')){await DELETE('photos','?id=eq.'+id);closeD();toast('已删除');loadPhotos();}};}
-    else del.style.display='none';
+    renderDetail(p);
     loadDetailReacts(id);
     loadComments(id);
     document.getElementById('dOv').classList.add('open');
   }catch(e){toast('加载失败');}
 }
 function closeD(){document.getElementById('dOv').classList.remove('open');curId=null;}
+
+async function deletePhoto(id){
+  if(!confirm('删除这帧记录？'))return;
+  try{
+    await DEL('photos','?id=eq.'+id);
+    closeD();toast('已删除');loadPhotos();
+  }catch(e){toast('删除失败');}
+}
 
 async function loadComments(pid){
   const list=document.getElementById('cmtList');
@@ -511,7 +561,7 @@ async function loadComments(pid){
     list.innerHTML=rows.map(c=>{
       const t=new Date(c.created_at);
       const ts=t.toLocaleDateString('ja-JP',{month:'2-digit',day:'2-digit'}).replace('/','.') +' '+t.toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'});
-      const canDel=session&&(session.name===c.author);
+      const canDel=session&&session.name===c.author;
       return `<div class="cmt-item"><div class="cmt-meta"><span class="cmt-author">${c.author}</span><span class="cmt-time">${ts}${canDel?`<button class="cmt-del" onclick="delComment(${c.id},${pid})">×</button>`:''}</span></div><div class="cmt-text">${c.text}</div></div>`;
     }).join('');
     list.scrollTop=list.scrollHeight;
@@ -523,11 +573,13 @@ async function sendComment(){
   try{
     await POST('comments',{photo_id:curId,author:session.name,text:txt});
     document.getElementById('cmtInput').value='';
-    loadComments(curId);
+    await loadComments(curId);
+    const list=document.getElementById('cmtList');
+    list.scrollTop=list.scrollHeight;
   }catch(e){toast('发送失败');}
 }
 async function delComment(cid,pid){
-  try{await DELETE('comments','?id=eq.'+cid);loadComments(pid);}catch{}
+  try{await DEL('comments','?id=eq.'+cid);loadComments(pid);}catch{}
 }
 
 function fmtDate(d){if(!d)return'';const dt=new Date(d+'T00:00:00');return dt.toLocaleDateString('ja-JP',{year:'numeric',month:'2-digit',day:'2-digit'}).replace(/\//g,'.');}
