@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>#Film猫 · 多人胶片日志</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;600&family=Noto+Sans+JP:wght@300;400&family=IM+Fell+English:ital@1&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+/* 完整样式（与之前相同，为节省篇幅此处保留核心样式，实际使用时不会丢失功能） */
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{--ink:#1a1814;--paper:#f7f4ef;--paper2:#f0ece4;--rule:#d4cfc6;--muted:#9a9088;--accent:#2a2420;}
+body{background:var(--paper);color:var(--ink);font-family:'Noto Sans JP',sans-serif;min-height:100vh;}
+nav{display:flex;justify-content:space-between;align-items:baseline;padding:18px 40px 14px;border-bottom:1px solid var(--ink);}
+.nav-logo{font-family:'Noto Serif JP',serif;font-size:13px;letter-spacing:4px;font-weight:300;}
+.nav-logo strong{font-weight:600;font-size:17px;letter-spacing:2px;}
+.nav-right{display:flex;gap:24px;align-items:center;}
+.nav-tag{font-size:10px;letter-spacing:2px;color:var(--muted);}
+.nav-user{font-size:11px;letter-spacing:2px;color:var(--ink);display:flex;align-items:center;gap:8px;}
+.nav-dot{width:7px;height:7px;border-radius:50%;background:var(--ink);display:inline-block;}
+.masthead{display:grid;grid-template-columns:1fr 1px 1fr;padding:40px 40px 32px;border-bottom:1px solid var(--rule);}
+.masthead-left{padding-right:32px;}
+.masthead-rule{background:var(--rule);}
+.masthead-right{padding-left:32px;display:flex;flex-direction:column;justify-content:flex-end;}
+.mag-title{font-family:'IM Fell English',serif;font-style:italic;font-size:64px;line-height:1;letter-spacing:-1px;margin-bottom:4px;}
+.mag-hash{font-size:28px;font-style:normal;}
+.mag-tagline{font-size:10px;letter-spacing:4px;color:var(--muted);margin-top:10px;text-transform:uppercase;}
+.masthead-meta{font-size:10px;color:var(--muted);letter-spacing:2px;line-height:2.2;}
+.masthead-meta span{display:block;}
+.masthead-count{font-family:'Noto Serif JP',serif;font-size:32px;font-weight:300;color:var(--ink);margin-top:8px;}
+.masthead-count small{font-size:11px;letter-spacing:2px;color:var(--muted);display:block;margin-top:2px;}
+.upload-strip{padding:20px 40px;border-bottom:1px solid var(--rule);display:flex;align-items:center;gap:16px;}
+.upload-btn{display:flex;align-items:center;gap:10px;background:var(--ink);color:var(--paper);padding:10px 24px;border:none;cursor:pointer;font-family:'Noto Sans JP',sans-serif;font-size:11px;letter-spacing:3px;transition:opacity 0.2s;flex-shrink:0;}
+.upload-btn:hover{opacity:0.8;}
+.upload-drop-zone{flex:1;border:1px dashed var(--rule);padding:10px 16px;font-size:10px;color:var(--muted);letter-spacing:2px;cursor:pointer;text-align:center;transition:border-color 0.2s;}
+.upload-drop-zone:hover,.upload-drop-zone.dragover{border-color:var(--ink);}
+#fileInput{display:none;}
+.gallery{padding:0 40px 60px;}
+.issue-head{display:flex;align-items:baseline;gap:16px;padding:24px 0 16px;border-bottom:1px solid var(--rule);margin-bottom:28px;}
+.issue-label{font-family:'Noto Serif JP',serif;font-size:11px;letter-spacing:4px;color:var(--muted);}
+.issue-line{flex:1;height:1px;background:var(--rule);}
+.zine-grid{display:flex;flex-direction:column;gap:0;}
+.zine-entry{border-bottom:1px solid var(--rule);padding:32px 0;}
+.zine-entry:last-child{border-bottom:none;}
+.layout-a{display:grid;grid-template-columns:3fr 2fr;gap:0;}
+.layout-b{}
+.layout-c{display:grid;grid-template-columns:2fr 3fr;gap:0;}
+.entry-img-wrap{overflow:hidden;cursor:pointer;position:relative;}
+.entry-img-wrap img{width:100%;height:100%;object-fit:cover;display:block;filter:contrast(1.04) brightness(0.98);transition:filter 0.3s;}
+.entry-img-wrap:hover img{filter:contrast(1.08) brightness(0.95);}
+.layout-a .entry-img-wrap{height:380px;}
+.layout-b .entry-img-wrap{height:440px;}
+.layout-c .entry-img-wrap{height:320px;}
+.entry-body{padding:0 32px;display:flex;flex-direction:column;justify-content:space-between;}
+.layout-b .entry-body{display:grid;grid-template-columns:1fr 1px 1fr;gap:0;padding:24px 0 0;}
+.layout-b .entry-col1{padding-right:28px;}
+.layout-b .entry-col-rule{background:var(--rule);}
+.layout-b .entry-col2{padding-left:28px;display:flex;flex-direction:column;justify-content:flex-end;}
+.entry-no{font-family:'IM Fell English',serif;font-style:italic;font-size:11px;color:var(--muted);letter-spacing:2px;margin-bottom:16px;display:block;}
+.entry-title{font-family:'Noto Serif JP',serif;font-size:22px;font-weight:300;line-height:1.4;color:var(--ink);margin-bottom:12px;}
+.entry-title-big{font-size:30px;}
+.entry-byline{font-size:10px;letter-spacing:3px;color:var(--muted);margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+.entry-location{font-size:10px;letter-spacing:3px;color:var(--muted);margin-bottom:20px;display:flex;align-items:center;gap:6px;}
+.entry-location::before{content:'';display:inline-block;width:16px;height:1px;background:var(--muted);}
+.entry-note{font-family:'Noto Serif JP',serif;font-size:13px;line-height:2.1;color:#3a3630;flex:1;}
+.entry-foot{display:flex;justify-content:space-between;align-items:center;margin-top:20px;padding-top:14px;border-top:1px solid var(--rule);}
+.entry-date{font-size:10px;letter-spacing:2px;color:var(--muted);}
+.entry-mood-label{font-size:10px;letter-spacing:2px;color:var(--muted);display:flex;align-items:center;gap:6px;}
+.mood-dot{width:8px;height:8px;border-radius:50%;display:inline-block;flex-shrink:0;}
+.entry-tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
+.entry-tag{font-size:9px;letter-spacing:2px;color:var(--muted);border:1px solid var(--rule);padding:3px 9px;}
+.entry-reactions{display:flex;gap:8px;align-items:center;margin-top:14px;}
+.react-btn{display:flex;align-items:center;gap:5px;border:1px solid var(--rule);background:transparent;padding:5px 12px;font-family:'Noto Sans JP',sans-serif;font-size:10px;letter-spacing:1px;color:var(--muted);cursor:pointer;transition:all 0.15s;}
+.react-btn:hover{border-color:var(--ink);color:var(--ink);}
+.react-btn.reacted{border-color:var(--ink);background:var(--ink);color:var(--paper);}
+.react-dot{width:6px;height:6px;border-radius:50%;background:currentColor;display:inline-block;}
+.react-count{font-size:10px;}
+.comment-btn{border:none;background:none;font-size:10px;letter-spacing:2px;color:var(--muted);cursor:pointer;padding:5px 0;text-decoration:underline;text-underline-offset:3px;transition:color 0.15s;}
+.comment-btn:hover{color:var(--ink);}
+.mood-0{background:#2a2420;}.mood-1{background:#6a4a3a;}.mood-2{background:#4a5a6a;}.mood-3{background:#7a6a3a;}.mood-4{background:#5a6a4a;}.mood-5{background:#6a3a4a;}.mood-6{background:#3a4a6a;}.mood-7{background:#8a7a5a;}
+.empty{padding:80px 0;text-align:center;}
+.empty-title{font-family:'IM Fell English',serif;font-style:italic;font-size:28px;color:var(--muted);margin-bottom:8px;}
+.empty-sub{font-size:10px;letter-spacing:3px;color:var(--rule);}
+.overlay{display:none;position:fixed;inset:0;background:rgba(15,12,10,0.8);z-index:200;align-items:center;justify-content:center;padding:24px;}
+.overlay.open{display:flex;}
+.id-modal{background:var(--paper);width:100%;max-width:400px;border:1px solid var(--ink);padding:40px;}
+.id-title{font-family:'IM Fell English',serif;font-style:italic;font-size:26px;margin-bottom:6px;}
+.id-sub{font-size:10px;letter-spacing:3px;color:var(--muted);margin-bottom:28px;}
+.id-field{margin-bottom:16px;}
+.id-field label{display:block;font-size:9px;letter-spacing:3px;color:var(--muted);margin-bottom:6px;text-transform:uppercase;}
+.id-field input{width:100%;background:transparent;border:none;border-bottom:1px solid var(--rule);padding:8px 0;font-family:'Noto Sans JP',sans-serif;font-size:13px;color:var(--ink);outline:none;transition:border-color 0.2s;}
+.id-field input:focus{border-color:var(--ink);}
+.id-hint{font-size:10px;color:var(--muted);letter-spacing:1px;margin-top:6px;}
+.id-btn{width:100%;margin-top:24px;background:var(--ink);color:var(--paper);border:none;padding:13px;font-family:'Noto Sans JP',sans-serif;font-size:10px;letter-spacing:5px;cursor:pointer;transition:opacity 0.2s;}
+.id-btn:hover{opacity:0.8;}
+.id-switch{margin-top:16px;text-align:center;font-size:10px;color:var(--muted);letter-spacing:1px;}
+.id-switch a{color:var(--ink);cursor:pointer;text-decoration:underline;text-underline-offset:3px;}
+.umodal{background:var(--paper);width:100%;max-width:640px;max-height:92vh;overflow-y:auto;border:1px solid var(--ink);padding:36px;position:relative;}
+.modal-close{position:absolute;top:16px;right:20px;background:none;border:none;font-size:11px;letter-spacing:2px;color:var(--muted);cursor:pointer;}
+.modal-close:hover{color:var(--ink);}
+.umodal-prev{width:100%;max-height:280px;object-fit:cover;display:block;margin-bottom:28px;filter:contrast(1.04);}
+.umodal-title{font-family:'Noto Serif JP',serif;font-size:13px;font-weight:300;letter-spacing:4px;color:var(--muted);margin-bottom:24px;}
+.field{margin-bottom:18px;}
+.field label{display:block;font-size:9px;letter-spacing:3px;color:var(--muted);margin-bottom:6px;text-transform:uppercase;}
+.field input,.field textarea{width:100%;background:transparent;border:none;border-bottom:1px solid var(--rule);padding:6px 0;font-family:'Noto Sans JP',sans-serif;font-size:13px;color:var(--ink);outline:none;transition:border-color 0.2s;}
+.field input:focus,.field textarea:focus{border-color:var(--ink);}
+.field textarea{resize:none;min-height:72px;line-height:1.9;margin-top:4px;}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
+.mood-picker{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+.mpick{padding:10px 8px;border:1px solid var(--rule);background:transparent;cursor:pointer;font-family:'Noto Sans JP',sans-serif;font-size:10px;letter-spacing:1px;color:var(--muted);display:flex;align-items:center;gap:7px;transition:all 0.15s;text-align:left;}
+.mpick:hover{border-color:var(--ink);color:var(--ink);}
+.mpick.sel{border-color:var(--ink);background:var(--ink);color:var(--paper);}
+.mpick.sel .mood-dot{background:var(--paper)!important;}
+.submit-btn{width:100%;margin-top:24px;background:var(--ink);color:var(--paper);border:none;padding:14px;font-family:'Noto Sans JP',sans-serif;font-size:10px;letter-spacing:5px;cursor:pointer;transition:opacity 0.2s;}
+.submit-btn:hover{opacity:0.8;}
+.dmodal{background:var(--paper);width:100%;max-width:860px;max-height:94vh;overflow-y:auto;border:1px solid var(--ink);position:relative;display:grid;grid-template-columns:1fr 320px;}
+.dmodal-img-col{position:relative;}
+.dmodal-img{width:100%;height:100%;object-fit:cover;display:block;filter:contrast(1.04);min-height:400px;}
+.dmodal-right{border-left:1px solid var(--rule);display:flex;flex-direction:column;max-height:94vh;overflow-y:auto;}
+.dmodal-body{padding:28px 24px;flex:1;}
+.dmodal-no{font-family:'IM Fell English',serif;font-style:italic;font-size:11px;color:var(--muted);letter-spacing:2px;margin-bottom:10px;}
+.dmodal-title{font-family:'Noto Serif JP',serif;font-size:22px;font-weight:300;margin-bottom:8px;line-height:1.3;}
+.dmodal-byline{font-size:10px;letter-spacing:2px;color:var(--muted);margin-bottom:14px;}
+.dmodal-meta{display:flex;gap:16px;align-items:center;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);margin-bottom:18px;flex-wrap:wrap;}
+.dmodal-loc,.dmodal-date{font-size:10px;letter-spacing:2px;color:var(--muted);}
+.dmodal-moodrow{display:flex;align-items:center;gap:6px;}
+.dmodal-note{font-family:'Noto Serif JP',serif;font-size:13px;line-height:2.2;color:#3a3630;}
+.dmodal-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:16px;}
+.dmodal-tag{font-size:9px;letter-spacing:2px;color:var(--muted);border:1px solid var(--rule);padding:3px 9px;}
+.dreact-row{display:flex;gap:8px;flex-wrap:wrap;padding:16px 24px;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);}
+.comments-section{flex:1;display:flex;flex-direction:column;min-height:0;}
+.comments-head{padding:14px 24px 10px;font-size:10px;letter-spacing:3px;color:var(--muted);border-bottom:1px solid var(--rule);}
+.comments-list{flex:1;overflow-y:auto;padding:0;}
+.comment-item{padding:14px 24px;border-bottom:1px solid var(--rule);}
+.comment-meta{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;}
+.comment-author{font-size:10px;letter-spacing:2px;color:var(--ink);font-weight:500;}
+.comment-time{font-size:9px;letter-spacing:1px;color:var(--muted);}
+.comment-text{font-family:'Noto Serif JP',serif;font-size:12px;line-height:1.9;color:#3a3630;}
+.comment-del{font-size:9px;color:var(--muted);background:none;border:none;cursor:pointer;float:right;margin-left:8px;}
+.comment-del:hover{color:#8a3020;}
+.no-comments{padding:28px 24px;font-size:11px;color:var(--rule);letter-spacing:2px;text-align:center;font-style:italic;font-family:'IM Fell English',serif;}
+.comment-form{padding:14px 24px;border-top:1px solid var(--rule);}
+.comment-input{width:100%;background:transparent;border:none;border-bottom:1px solid var(--rule);padding:6px 0;font-family:'Noto Serif JP',serif;font-size:12px;color:var(--ink);outline:none;resize:none;min-height:52px;line-height:1.8;transition:border-color 0.2s;}
+.comment-input:focus{border-color:var(--ink);}
+.comment-send{margin-top:10px;background:var(--ink);color:var(--paper);border:none;padding:8px 20px;font-size:9px;letter-spacing:3px;cursor:pointer;transition:opacity 0.2s;font-family:'Noto Sans JP',sans-serif;}
+.comment-send:hover{opacity:0.8;}
+.dmodal-del{display:block;margin:12px 24px;font-size:9px;letter-spacing:2px;color:var(--rule);background:none;border:none;cursor:pointer;padding:0;transition:color 0.2s;text-align:left;}
+.dmodal-del:hover{color:#8a3020;}
+.toast{position:fixed;bottom:32px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--paper);padding:10px 24px;font-size:10px;letter-spacing:3px;opacity:0;transition:opacity 0.3s;pointer-events:none;z-index:999;}
+.toast.show{opacity:1;}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo"><strong>#Film猫</strong> &nbsp;·&nbsp; zine journal</div>
+  <div class="nav-right">
+    <div class="nav-tag" id="navDate"></div>
+    <div class="nav-tag" id="navCount">NO.000</div>
+    <div class="nav-user" id="navUser" style="display:none">
+      <span class="nav-dot"></span>
+      <span id="navName"></span>
+      <button style="background:none;border:none;font-size:9px;letter-spacing:2px;color:var(--muted);cursor:pointer;" onclick="logout()">退出</button>
+    </div>
+    <button id="loginNavBtn" style="background:none;border:1px solid var(--rule);padding:6px 16px;font-size:10px;letter-spacing:2px;color:var(--muted);cursor:pointer;font-family:'Noto Sans JP',sans-serif;" onclick="openId()">登录 / 注册</button>
+  </div>
+</nav>
+
+<div class="masthead">
+  <div class="masthead-left">
+    <div class="mag-title"><span class="mag-hash">#</span>Film猫</div>
+    <div class="mag-tagline">A shared film photography journal</div>
+  </div>
+  <div class="masthead-rule"></div>
+  <div class="masthead-right">
+    <div class="masthead-meta">
+      <span id="mhDate"></span>
+      <span>INDEPENDENT ZINE</span>
+      <span>PHOTOGRAPHY · MEMORY · FEELING</span>
+    </div>
+    <div class="masthead-count" id="mhCount">000<small>FRAMES COLLECTED</small></div>
+  </div>
+</div>
+
+<div class="upload-strip">
+  <button class="upload-btn" onclick="requireLogin(()=>document.getElementById('fileInput').click())">+ 上传胶片</button>
+  <div class="upload-drop-zone" id="dropZone">拖拽照片到此处</div>
+  <input type="file" id="fileInput" accept="image/*">
+</div>
+
+<div class="gallery">
+  <div class="issue-head">
+    <span class="issue-label">CONTENTS</span>
+    <div class="issue-line"></div>
+    <span class="issue-label" id="issueCount"></span>
+  </div>
+  <div class="zine-grid" id="zineGrid">
+    <div class="empty"><div class="empty-title">loading frames...</div><div class="empty-sub">连接Supabase中</div></div>
+  </div>
+</div>
+
+<!-- Identity Modal -->
+<div class="overlay" id="idOverlay">
+  <div class="id-modal">
+    <div class="id-title" id="idTitle">Welcome.</div>
+    <div class="id-sub" id="idSub">SIGN IN TO #FILM猫</div>
+    <div class="id-field"><label>署名 / Pen Name</label><input id="idName" type="text" placeholder="你的笔名或昵称" maxlength="20"></div>
+    <div class="id-field" id="idPassWrap"><label>密码</label><input id="idPass" type="password" placeholder="······"></div>
+    <div class="id-field" id="idPass2Wrap" style="display:none"><label>确认密码</label><input id="idPass2" type="password" placeholder="······"></div>
+    <div class="id-hint" id="idHint"></div>
+    <button class="id-btn" id="idSubmit" onclick="submitId()">进 入</button>
+    <div class="id-switch" id="idSwitch">还没有账号？<a onclick="toggleIdMode()">注册</a></div>
+  </div>
+</div>
+
+<!-- Upload Modal -->
+<div class="overlay" id="uOverlay">
+  <div class="umodal">
+    <button class="modal-close" onclick="closeU()">CLOSE ×</button>
+    <img id="uPrev" class="umodal-prev" src="" alt="">
+    <div class="umodal-title">RECORD THIS FRAME</div>
+    <div class="field-row">
+      <div class="field"><label>Title</label><input id="fTitle" type="text" placeholder="这一刻的名字"></div>
+      <div class="field"><label>Location</label><input id="fLoc" type="text" placeholder="地点"></div>
+    </div>
+    <div class="field-row">
+      <div class="field"><label>Date</label><input id="fDate" type="date"></div>
+      <div class="field"><label>Tags（逗号分隔）</label><input id="fTags" type="text" placeholder="人文, 黄昏, 街拍"></div>
+    </div>
+    <div class="field">
+      <label>Mood</label>
+      <div class="mood-picker" id="moodPicker">
+        <button class="mpick" data-i="0" onclick="pickMood(this)"><span class="mood-dot mood-0"></span>平静</button>
+        <button class="mpick" data-i="1" onclick="pickMood(this)"><span class="mood-dot mood-1"></span>温柔</button>
+        <button class="mpick" data-i="2" onclick="pickMood(this)"><span class="mood-dot mood-2"></span>忧郁</button>
+        <button class="mpick" data-i="3" onclick="pickMood(this)"><span class="mood-dot mood-3"></span>兴奋</button>
+        <button class="mpick" data-i="4" onclick="pickMood(this)"><span class="mood-dot mood-4"></span>治愈</button>
+        <button class="mpick" data-i="5" onclick="pickMood(this)"><span class="mood-dot mood-5"></span>孤独</button>
+        <button class="mpick" data-i="6" onclick="pickMood(this)"><span class="mood-dot mood-6"></span>沉思</button>
+        <button class="mpick" data-i="7" onclick="pickMood(this)"><span class="mood-dot mood-7"></span>怀念</button>
+      </div>
+    </div>
+    <div class="field"><label>Note</label><textarea id="fNote" placeholder="写下当时的心情或故事……"></textarea></div>
+    <button class="submit-btn" onclick="save()">— 记 录 —</button>
+  </div>
+</div>
+
+<!-- Detail Modal -->
+<div class="overlay" id="dOverlay">
+  <div class="dmodal">
+    <div class="dmodal-img-col">
+      <img id="dImg" class="dmodal-img" src="" alt="">
+    </div>
+    <div class="dmodal-right">
+      <button class="modal-close" onclick="closeD()" style="position:sticky;top:12px;right:16px;margin:12px 16px 0 auto;display:block;">CLOSE ×</button>
+      <div class="dmodal-body">
+        <div class="dmodal-no" id="dNo"></div>
+        <div class="dmodal-title" id="dTitle"></div>
+        <div class="dmodal-byline" id="dByline"></div>
+        <div class="dmodal-meta">
+          <span class="dmodal-date" id="dDate"></span>
+          <span class="dmodal-loc" id="dLoc"></span>
+          <div class="dmodal-moodrow"><span class="mood-dot" id="dMoodDot"></span><span class="dmodal-date" id="dMoodLbl"></span></div>
+        </div>
+        <div class="dmodal-note" id="dNote"></div>
+        <div class="dmodal-tags" id="dTags"></div>
+        <button class="dmodal-del" id="dDel" style="display:none">DELETE THIS FRAME</button>
+      </div>
+      <div class="dreact-row" id="dReacts"></div>
+      <div class="comments-section">
+        <div class="comments-head">COMMENTS</div>
+        <div class="comments-list" id="commentsList"></div>
+        <div class="comment-form">
+          <textarea class="comment-input" id="commentInput" placeholder="写下你的想法……" rows="2"></textarea>
+          <button class="comment-send" onclick="sendComment()">发 送</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ========== 你的 Supabase 配置（已填入） ==========
+const SUPABASE_URL = "https://igqkwtlxehssfqryxjfc.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlncWt3dGx4ZWhzc2Zxcnl4amZjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3MzM5OTIsImV4cCI6MjA5MjMwOTk5Mn0.h2PA7wzhtQI8VUO5-kMHHWEIyTBlaJVVI1UNtjivix";
+// ================================================
+
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const MOODS=['平静','温柔','忧郁','兴奋','治愈','孤独','沉思','怀念'];
+const LAYOUTS=['layout-a','layout-b','layout-c','layout-a','layout-c','layout-b'];
+const REACTIONS=[{key:'resonance',label:'共鸣'},{key:'touched',label:'触动'},{key:'beautiful',label:'美'},{key:'quiet',label:'静'},{key:'wander',label:'漫游'}];
+
+let currentPhotoId = null;
+let selMood = -1;
+let pendingFile = null;
+let idMode = 'login';
+let pendingLoginCb = null;
+
+// ---------- 辅助函数 ----------
+function fmtDate(d) { if(!d) return ''; return new Date(d).toLocaleDateString('ja-JP',{year:'numeric',month:'2-digit',day:'2-digit'}).replace(/\//g,'.'); }
+function toast(msg) { const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2200); }
+
+// ---------- 用户认证 (Supabase 存储) ----------
+async function getUsers() { const {data,error}=await supabase.from('profiles').select('name,password'); if(error) return []; return data; }
+async function userExists(name) { const {data}=await supabase.from('profiles').select('name').eq('name',name); return data && data.length>0; }
+async function registerUser(name,pass) { const {error}=await supabase.from('profiles').insert([{name,password:pass}]); if(error) throw error; }
+async function loginUser(name,pass) { const {data,error}=await supabase.from('profiles').select('name').eq('name',name).eq('password',pass); if(error||!data.length) return false; return true; }
+
+async function submitId() {
+  const name = document.getElementById('idName').value.trim();
+  const pass = document.getElementById('idPass').value;
+  if(!name||!pass) { document.getElementById('idHint').textContent='请填写完整'; return; }
+  try {
+    if(idMode==='register') {
+      const p2 = document.getElementById('idPass2').value;
+      if(pass!==p2) { document.getElementById('idHint').textContent='两次密码不一致'; return; }
+      const exists = await userExists(name);
+      if(exists) { document.getElementById('idHint').textContent='署名已被使用'; return; }
+      await registerUser(name,pass);
+      sessionStorage.setItem('fc_user', JSON.stringify({name}));
+      toast('欢迎，'+name);
+      closeId();
+      updateSessionUI();
+      if(pendingLoginCb) { pendingLoginCb(); pendingLoginCb=null; }
+      render();
+    } else {
+      const ok = await loginUser(name,pass);
+      if(!ok) { document.getElementById('idHint').textContent='署名或密码错误'; return; }
+      sessionStorage.setItem('fc_user', JSON.stringify({name}));
+      toast('欢迎回来，'+name);
+      closeId();
+      updateSessionUI();
+      if(pendingLoginCb) { pendingLoginCb(); pendingLoginCb=null; }
+      render();
+    }
+  } catch(e) { console.error(e); document.getElementById('idHint').textContent='服务器错误，请稍后重试'; }
+}
+
+function getSession() { return JSON.parse(sessionStorage.getItem('fc_user')||'null'); }
+function updateSessionUI() {
+  const s=getSession();
+  if(s){
+    document.getElementById('navUser').style.display='flex';
+    document.getElementById('navName').textContent=s.name;
+    document.getElementById('loginNavBtn').style.display='none';
+  } else {
+    document.getElementById('navUser').style.display='none';
+    document.getElementById('loginNavBtn').style.display='block';
+  }
+}
+function logout() { sessionStorage.removeItem('fc_user'); updateSessionUI(); render(); toast('已退出'); }
+function requireLogin(cb) { if(getSession()) cb(); else { pendingLoginCb=cb; openId(); } }
+function openId(cb) { pendingLoginCb=cb||null; document.getElementById('idOverlay').classList.add('open'); }
+function closeId() { document.getElementById('idOverlay').classList.remove('open'); document.getElementById('idHint').textContent=''; }
+function toggleIdMode() {
+  idMode = idMode==='login'?'register':'login';
+  document.getElementById('idTitle').textContent = idMode==='login'?'Welcome.':'Join us.';
+  document.getElementById('idSub').textContent = idMode==='login'?'SIGN IN TO #FILM猫':'CREATE YOUR PEN NAME';
+  document.getElementById('idSubmit').textContent = idMode==='login'?'进 入':'注 册';
+  document.getElementById('idSwitch').innerHTML = idMode==='login'?'还没有账号？<a onclick="toggleIdMode()">注册</a>':'已有账号？<a onclick="toggleIdMode()">登录</a>';
+  document.getElementById('idPass2Wrap').style.display = idMode==='register'?'block':'none';
+  document.getElementById('idHint').textContent='';
+}
+
+// ---------- 图片上传到 Supabase Storage ----------
+async function uploadImage(file, userId) {
+  const ext = file.name.split('.').pop();
+  const fileName = `${Date.now()}_${userId}.${ext}`;
+  const { data, error } = await supabase.storage.from('photos').upload(fileName, file);
+  if(error) throw error;
+  const { data: { publicUrl } } = supabase.storage.from('photos').getPublicUrl(fileName);
+  return publicUrl;
+}
+
+// ---------- 照片 CRUD ----------
+async function fetchPhotos() {
+  const {data, error} = await supabase.from('photos').select('*').order('created_at', {ascending: false});
+  if(error) { console.error(error); return []; }
+  return data;
+}
+
+async function addPhoto(photo) {
+  const {data, error} = await supabase.from('photos').insert([photo]).select();
+  if(error) throw error;
+  return data[0];
+}
+
+async function deletePhoto(id) {
+  const {data: photo} = await supabase.from('photos').select('image_url').eq('id',id).single();
+  if(photo && photo.image_url) {
+    const path = photo.image_url.split('/').pop();
+    await supabase.storage.from('photos').remove([path]);
+  }
+  const {error} = await supabase.from('photos').delete().eq('id',id);
+  if(error) throw error;
+}
+
+// ---------- 反应 (Reactions) ----------
+async function fetchReactions(photoId) {
+  const {data, error} = await supabase.from('reactions').select('*').eq('photo_id', photoId);
+  if(error) return [];
+  return data;
+}
+
+async function toggleReaction(photoId, key) {
+  const user = getSession();
+  if(!user) { requireLogin(()=>toggleReaction(photoId,key)); return; }
+  const {data: existing} = await supabase.from('reactions').select('id').eq('photo_id',photoId).eq('reaction_key',key).eq('user_name',user.name);
+  if(existing && existing.length) {
+    await supabase.from('reactions').delete().eq('id', existing[0].id);
+  } else {
+    await supabase.from('reactions').insert([{photo_id:photoId, reaction_key:key, user_name:user.name}]);
+  }
+  if(currentPhotoId === photoId) refreshCurrentPhoto();
+  render();
+}
+
+// ---------- 评论 ----------
+async function fetchComments(photoId) {
+  const {data, error} = await supabase.from('comments').select('*').eq('photo_id', photoId).order('created_at', {ascending: false});
+  if(error) return [];
+  return data;
+}
+
+async function addComment(photoId, text) {
+  const user = getSession();
+  if(!user) { requireLogin(()=>addComment(photoId,text)); return; }
+  const {error} = await supabase.from('comments').insert([{photo_id:photoId, user_name:user.name, content:text}]);
+  if(error) throw error;
+  if(currentPhotoId === photoId) refreshCurrentPhoto();
+}
+
+async function deleteComment(commentId) {
+  const {error} = await supabase.from('comments').delete().eq('id', commentId);
+  if(error) throw error;
+  if(currentPhotoId) refreshCurrentPhoto();
+}
+
+// ---------- 实时订阅 ----------
+let photoSubscription = null;
+function subscribeToPhotos() {
+  if(photoSubscription) photoSubscription.unsubscribe();
+  photoSubscription = supabase
+    .channel('public:photos')
+    .on('postgres_changes', {event:'*', schema:'public', table:'photos'}, () => { render(); updateCount(); })
+    .on('postgres_changes', {event:'*', schema:'public', table:'reactions'}, () => { if(currentPhotoId) refreshCurrentPhoto(); render(); })
+    .on('postgres_changes', {event:'*', schema:'public', table:'comments'}, () => { if(currentPhotoId) refreshCurrentPhoto(); })
+    .subscribe();
+}
+
+// ---------- 渲染主列表 ----------
+async function render() {
+  const photos = await fetchPhotos();
+  const g = document.getElementById('zineGrid');
+  if(!photos.length) { g.innerHTML='<div class="empty"><div class="empty-title">no frames yet.</div><div class="empty-sub">上传你的第一张胶片</div></div>'; return; }
+  const session = getSession();
+  const reactionsMap = {};
+  for(let p of photos) {
+    const reacts = await fetchReactions(p.id);
+    reactionsMap[p.id] = reacts;
+  }
+
+  let html = '';
+  for(let i=0; i<photos.length; i++) {
+    const p = photos[i];
+    const lay = LAYOUTS[i%LAYOUTS.length];
+    const no = 'No.'+String(photos.length-i).padStart(3,'0');
+    const moodDot = p.mood>=0 ? `<span class="mood-dot mood-${p.mood}"></span>` : '';
+    const moodLbl = p.mood>=0 ? `<div class="entry-mood-label">${moodDot}${MOODS[p.mood]}</div>` : '';
+    const tagsHtml = p.tags && p.tags.length ? `<div class="entry-tags">${p.tags.map(t=>`<span class="entry-tag">${t}</span>`).join('')}</div>` : '';
+    const reacts = reactionsMap[p.id] || [];
+    const comments = await fetchComments(p.id);
+    const commentCount = comments.length;
+    const reactionsHtml = REACTIONS.map(r=>{
+      const users = reacts.filter(rr=>rr.reaction_key===r.key).map(rr=>rr.user_name);
+      if(!users.length) return '';
+      const reacted = session && users.includes(session.name);
+      return `<button class="react-btn${reacted?' reacted':''}" style="padding:3px 9px;font-size:9px;" onclick="event.stopPropagation();toggleReaction(${p.id},'${r.key}');render();">
+        <span class="react-dot"></span>${r.label} <span class="react-count">${users.length}</span>
+      </button>`;
+    }).filter(Boolean).join('');
+    const foot = `<div class="entry-foot"><span class="entry-date">${fmtDate(p.date)}</span>${moodLbl}</div>${tagsHtml}<div class="entry-reactions" id="react-${p.id}">${reactionsHtml}</div><button class="comment-btn" onclick="event.stopPropagation();openD(${p.id})">${commentCount?commentCount+' 条留言':'留言'}</button>`;
+
+    if(lay==='layout-a') html+=`
+      <div class="zine-entry layout-a">
+        <div class="entry-img-wrap" onclick="openD(${p.id})"><img src="${p.image_url}" alt="${p.title}" loading="lazy"></div>
+        <div class="entry-body"><div><span class="entry-no">${no}</span><div class="entry-byline">by ${p.author}</div><div class="entry-title entry-title-big">${escapeHtml(p.title)}</div>${p.loc?`<div class="entry-location">${escapeHtml(p.loc)}</div>`:''}<div class="entry-note">${escapeHtml(p.note||'')}</div></div>${foot}</div>
+      </div>`;
+    else if(lay==='layout-b') html+=`
+      <div class="zine-entry layout-b">
+        <div class="entry-img-wrap" onclick="openD(${p.id})"><img src="${p.image_url}" alt="${p.title}" loading="lazy"></div>
+        <div class="entry-body"><div class="entry-col1"><span class="entry-no">${no}</span><div class="entry-byline">by ${p.author}</div><div class="entry-title entry-title-big">${escapeHtml(p.title)}</div>${p.loc?`<div class="entry-location">${escapeHtml(p.loc)}</div>`:''}</div><div class="entry-col-rule"></div><div class="entry-col2"><div class="entry-note">${escapeHtml(p.note||'')}</div>${foot}</div></div>
+      </div>`;
+    else html+=`
+      <div class="zine-entry layout-c">
+        <div class="entry-body"><div><span class="entry-no">${no}</span><div class="entry-byline">by ${p.author}</div><div class="entry-title">${escapeHtml(p.title)}</div>${p.loc?`<div class="entry-location">${escapeHtml(p.loc)}</div>`:''}<div class="entry-note">${escapeHtml(p.note||'')}</div></div>${foot}</div>
+        <div class="entry-img-wrap" onclick="openD(${p.id})"><img src="${p.image_url}" alt="${p.title}" loading="lazy"></div>
+      </div>`;
+  }
+  g.innerHTML = html;
+}
+
+function escapeHtml(str) { if(!str) return ''; return str.replace(/[&<>]/g, function(m) { if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
+
+async function updateCount() {
+  const photos = await fetchPhotos();
+  const n = photos.length;
+  const s=String(n).padStart(3,'0');
+  document.getElementById('navCount').textContent='NO.'+s;
+  document.getElementById('mhCount').innerHTML=s+'<small>FRAMES COLLECTED</small>';
+  document.getElementById('issueCount').textContent=n?n+' FRAMES':'';
+}
+
+// ---------- 上传流程 ----------
+function openU(file) { pendingFile=file; const r=new FileReader(); r.onload=ev=>{ document.getElementById('uPrev').src=ev.target.result; document.getElementById('uOverlay').classList.add('open'); }; r.readAsDataURL(file); }
+function closeU() { document.getElementById('uOverlay').classList.remove('open'); pendingFile=null; selMood=-1; document.querySelectorAll('.mpick').forEach(b=>b.classList.remove('sel')); ['fTitle','fLoc','fNote','fTags'].forEach(id=>document.getElementById(id).value=''); }
+function pickMood(btn) { document.querySelectorAll('.mpick').forEach(b=>b.classList.remove('sel')); btn.classList.add('sel'); selMood=+btn.dataset.i; }
+async function save() {
+  if(!pendingFile) return;
+  const user = getSession();
+  if(!user) { requireLogin(()=>save()); return; }
+  const title = document.getElementById('fTitle').value.trim() || '無題';
+  const loc = document.getElementById('fLoc').value.trim();
+  const date = document.getElementById('fDate').value;
+  const note = document.getElementById('fNote').value.trim();
+  const tags = document.getElementById('fTags').value.split(',').map(t=>t.trim()).filter(Boolean);
+  try {
+    const image_url = await uploadImage(pendingFile, user.name);
+    await addPhoto({ author:user.name, title, loc, date, mood:selMood, note, tags, image_url });
+    closeU();
+    render();
+    updateCount();
+    toast('已发布');
+  } catch(e) { console.error(e); toast('上传失败，请重试'); }
+}
+
+// ---------- 详情弹窗 ----------
+async function openD(id) {
+  currentPhotoId = id;
+  const {data: p, error} = await supabase.from('photos').select('*').eq('id',id).single();
+  if(error) return;
+  const photos = await fetchPhotos();
+  const idx = photos.findIndex(x=>x.id===id);
+  const session = getSession();
+  document.getElementById('dImg').src = p.image_url;
+  document.getElementById('dNo').textContent = 'No.'+String(photos.length-idx).padStart(3,'0');
+  document.getElementById('dTitle').textContent = p.title;
+  document.getElementById('dByline').textContent = 'by '+p.author;
+  document.getElementById('dDate').textContent = fmtDate(p.date);
+  document.getElementById('dLoc').textContent = p.loc||'';
+  const dot = document.getElementById('dMoodDot');
+  const lbl = document.getElementById('dMoodLbl');
+  if(p.mood>=0){dot.className='mood-dot mood-'+p.mood; lbl.textContent=MOODS[p.mood];}
+  else{dot.className='mood-dot'; lbl.textContent='';}
+  document.getElementById('dNote').textContent = p.note||'';
+  document.getElementById('dTags').innerHTML = p.tags.map(t=>`<span class="dmodal-tag">${escapeHtml(t)}</span>`).join('');
+  const delBtn = document.getElementById('dDel');
+  if(session && session.name===p.author) { delBtn.style.display='block'; delBtn.onclick=async ()=>{ if(confirm('删除这帧记录？')){ await deletePhoto(id); closeD(); render(); updateCount(); } }; }
+  else { delBtn.style.display='none'; }
+  await refreshCurrentPhoto();
+  document.getElementById('dOverlay').classList.add('open');
+}
+
+async function refreshCurrentPhoto() {
+  if(!currentPhotoId) return;
+  const session = getSession();
+  const reacts = await fetchReactions(currentPhotoId);
+  const container = document.getElementById('dReacts');
+  container.innerHTML = REACTIONS.map(r=>{
+    const users = reacts.filter(rr=>rr.reaction_key===r.key).map(rr=>rr.user_name);
+    const reacted = session && users.includes(session.name);
+    return `<button class="react-btn${reacted?' reacted':''}" onclick="toggleReaction(${currentPhotoId},'${r.key}')"><span class="react-dot"></span>${r.label}${users.length?` <span class="react-count">${users.length}</span>`:''}</button>`;
+  }).join('');
+  const comments = await fetchComments(currentPhotoId);
+  const list = document.getElementById('commentsList');
+  if(!comments.length) { list.innerHTML='<div class="no-comments">— no comments yet —</div>'; }
+  else {
+    list.innerHTML = comments.map(c=>{
+      const t=new Date(c.created_at);
+      const ts=t.toLocaleDateString('ja-JP',{month:'2-digit',day:'2-digit'}).replace('/','.')+' '+t.toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'});
+      const canDel = session && (session.name===c.user_name);
+      return `<div class="comment-item"><div class="comment-meta"><span class="comment-author">${escapeHtml(c.user_name)}</span><span class="comment-time">${ts}${canDel?`<button class="comment-del" onclick="deleteComment(${c.id})">×</button>`:''}</span></div><div class="comment-text">${escapeHtml(c.content)}</div></div>`;
+    }).join('');
+  }
+}
+
+async function sendComment() {
+  const txt = document.getElementById('commentInput').value.trim();
+  if(!txt) return;
+  if(!getSession()) { requireLogin(()=>sendComment()); return; }
+  await addComment(currentPhotoId, txt);
+  document.getElementById('commentInput').value='';
+  await refreshCurrentPhoto();
+}
+function closeD() { document.getElementById('dOverlay').classList.remove('open'); currentPhotoId=null; }
+
+// ---------- 初始化 ----------
+async function init() {
+  const now=new Date();
+  const ds=now.toLocaleDateString('ja-JP',{year:'numeric',month:'2-digit',day:'2-digit'}).replace(/\//g,'.');
+  document.getElementById('navDate').textContent=ds;
+  document.getElementById('mhDate').textContent=ds;
+  document.getElementById('fDate').value=now.toISOString().split('T')[0];
+  updateSessionUI();
+  subscribeToPhotos();
+  await render();
+  await updateCount();
+  const dz=document.getElementById('dropZone');
+  dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('dragover');});
+  dz.addEventListener('dragleave',()=>dz.classList.remove('dragover'));
+  dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('dragover');const f=e.dataTransfer.files[0];if(f&&f.type.startsWith('image/'))requireLogin(()=>openU(f));});
+  dz.addEventListener('click',()=>requireLogin(()=>document.getElementById('fileInput').click()));
+  document.getElementById('fileInput').addEventListener('change',e=>{if(e.target.files[0])openU(e.target.files[0]);e.target.value='';});
+  document.getElementById('uOverlay').addEventListener('click',e=>{if(e.target===e.currentTarget)closeU();});
+  document.getElementById('dOverlay').addEventListener('click',e=>{if(e.target===e.currentTarget)closeD();});
+  document.getElementById('idOverlay').addEventListener('click',e=>{if(e.target===e.currentTarget)closeId();});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeU();closeD();closeId();}});
+}
+init();
+</script>
+</body>
+</html>
